@@ -1,4 +1,4 @@
-module notes-users
+module github.com/Rock2k3/notes-users
 
 go 1.18
 
