@@ -7,6 +7,7 @@ require (
 	github.com/golang-migrate/migrate/v4 v4.15.2
 	github.com/joho/godotenv v1.4.0
 	google.golang.org/grpc v1.47.0
+	notes-users v0.0.0-00010101000000-000000000000
 )
 
 require (
@@ -22,3 +23,5 @@ require (
 	google.golang.org/genproto v0.0.0-20220706185917-7780775163c4 // indirect
 	google.golang.org/protobuf v1.28.0 // indirect
 )
+
+replace notes-users => ./
