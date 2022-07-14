@@ -2,6 +2,7 @@ package server
 
 import (
 	"context"
+	"github.com/Rock2k3/notes-core/pkg/notesHttpServer"
 	NotesGrpcApi "github.com/Rock2k3/notes-grpc-api/generated-sources"
 	"github.com/google/uuid"
 	"google.golang.org/grpc"
@@ -13,34 +14,46 @@ import (
 )
 
 type server struct {
-	config *config.AppConfig
+	config  *config.AppConfig
+	httpSrv *notesHttpServer.HttpServer
+	grpcSrv *grpcServer
 }
 
-type grpcSrv struct {
+type grpcServer struct {
 	NotesGrpcApi.UnimplementedUserServiceServer
 	config *config.AppConfig
 }
 
 func NewServer(c *config.AppConfig) *server {
-	return &server{config: c}
+	return &server{
+		config:  c,
+		httpSrv: notesHttpServer.NewHttpServer(),
+		grpcSrv: &grpcServer{config: c},
+	}
 }
 
-func (s *server) Run() error {
+func (s *server) Run() {
 	lis, err := net.Listen("tcp", s.config.GrpcPort())
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
 	srv := grpc.NewServer()
-	NotesGrpcApi.RegisterUserServiceServer(srv, &grpcSrv{config: s.config})
+	NotesGrpcApi.RegisterUserServiceServer(srv, s.grpcSrv)
+
+	go func() {
+		err := s.httpSrv.Start(s.config.HttpAddress())
+		if err != nil {
+			return
+		}
+	}()
+
 	log.Printf("server listening at %v", lis.Addr())
 	if err := srv.Serve(lis); err != nil {
 		log.Fatalf("failed to serve: %v", err)
 	}
-
-	return nil
 }
 
-func (g *grpcSrv) GetUser(ctx context.Context, request *NotesGrpcApi.GetUserRequest) (*NotesGrpcApi.GetUserResponse, error) {
+func (g *grpcServer) GetUser(ctx context.Context, request *NotesGrpcApi.GetUserRequest) (*NotesGrpcApi.GetUserResponse, error) {
 
 	requestUserId, err := uuid.Parse(request.GetUserId())
 	if err != nil {
@@ -55,7 +68,7 @@ func (g *grpcSrv) GetUser(ctx context.Context, request *NotesGrpcApi.GetUserRequ
 	return &NotesGrpcApi.GetUserResponse{User: &NotesGrpcApi.User{UserId: request.GetUserId(), Name: usr.Name}}, nil
 }
 
-func (g *grpcSrv) AddUser(ctx context.Context, request *NotesGrpcApi.AddUserRequest) (*NotesGrpcApi.AddUserResponse, error) {
+func (g *grpcServer) AddUser(ctx context.Context, request *NotesGrpcApi.AddUserRequest) (*NotesGrpcApi.AddUserResponse, error) {
 
 	usr, err := users.AddUser(adapters.NewUsersPostgres(g.config), request.Name)
 	if usr == nil || err != nil {

@@ -18,8 +18,5 @@ func main() {
 		log.Fatal(err)
 	}
 
-	err = server.NewServer(appConf).Run()
-	if err != nil {
-		log.Fatal(err)
-	}
+	server.NewServer(appConf).Run()
 }
