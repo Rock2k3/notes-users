@@ -2,7 +2,7 @@ package server
 
 import (
 	"context"
-	"github.com/Rock2k3/notes-core/pkg/notesHttpServer"
+	"github.com/Rock2k3/notes-core/pkg/notes_http_server"
 	NotesGrpcApi "github.com/Rock2k3/notes-grpc-api/generated-sources"
 	"github.com/google/uuid"
 	"google.golang.org/grpc"
@@ -15,7 +15,7 @@ import (
 
 type server struct {
 	config  *config.AppConfig
-	httpSrv *notesHttpServer.HttpServer
+	httpSrv *notes_http_server.HttpServer
 	grpcSrv *grpcServer
 }
 
@@ -27,7 +27,7 @@ type grpcServer struct {
 func NewServer(c *config.AppConfig) *server {
 	return &server{
 		config:  c,
-		httpSrv: notesHttpServer.NewHttpServer(),
+		httpSrv: notes_http_server.NewHttpServer(),
 		grpcSrv: &grpcServer{config: c},
 	}
 }

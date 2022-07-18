@@ -3,17 +3,17 @@ module github.com/Rock2k3/notes-users
 go 1.18
 
 require (
+	github.com/Rock2k3/notes-core v0.0.0-20220718082257-7fe9724b4b8e
 	github.com/Rock2k3/notes-grpc-api v1.1.0
 	github.com/golang-migrate/migrate/v4 v4.15.2
+	github.com/google/uuid v1.3.0
 	github.com/joho/godotenv v1.4.0
 	google.golang.org/grpc v1.47.0
 	notes-users v0.0.0-00010101000000-000000000000
 )
 
 require (
-	github.com/Rock2k3/notes-core v0.0.0-20220714091307-c993ec5a9ccd // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
-	github.com/google/uuid v1.3.0 // indirect
 	github.com/hashicorp/errwrap v1.1.0 // indirect
 	github.com/hashicorp/go-multierror v1.1.1 // indirect
 	github.com/labstack/echo/v4 v4.7.2 // indirect
