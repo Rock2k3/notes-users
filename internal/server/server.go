@@ -2,8 +2,8 @@ package server
 
 import (
 	"context"
-	"github.com/Rock2k3/notes-core/pkg/notes_http_server"
-	NotesGrpcApi "github.com/Rock2k3/notes-grpc-api/generated-sources"
+	"github.com/Rock2k3/notes-core/pkg/noteshttpserver"
+	notesgrpcapi "github.com/Rock2k3/notes-grpc-api/generated-sources"
 	"github.com/google/uuid"
 	"google.golang.org/grpc"
 	"log"
@@ -15,19 +15,19 @@ import (
 
 type server struct {
 	config  *config.AppConfig
-	httpSrv *notes_http_server.HttpServer
+	httpSrv *noteshttpserver.HttpServer
 	grpcSrv *grpcServer
 }
 
 type grpcServer struct {
-	NotesGrpcApi.UnimplementedUserServiceServer
+	notesgrpcapi.UnimplementedUserServiceServer
 	config *config.AppConfig
 }
 
 func NewServer(c *config.AppConfig) *server {
 	return &server{
 		config:  c,
-		httpSrv: notes_http_server.NewHttpServer(),
+		httpSrv: noteshttpserver.NewHttpServer(),
 		grpcSrv: &grpcServer{config: c},
 	}
 }
@@ -38,7 +38,7 @@ func (s *server) Run() {
 		log.Fatalf("failed to listen: %v", err)
 	}
 	srv := grpc.NewServer()
-	NotesGrpcApi.RegisterUserServiceServer(srv, s.grpcSrv)
+	notesgrpcapi.RegisterUserServiceServer(srv, s.grpcSrv)
 
 	go func() {
 		err := s.httpSrv.Start(s.config.HttpAddress())
@@ -53,7 +53,7 @@ func (s *server) Run() {
 	}
 }
 
-func (g *grpcServer) GetUser(ctx context.Context, request *NotesGrpcApi.GetUserRequest) (*NotesGrpcApi.GetUserResponse, error) {
+func (g *grpcServer) GetUser(ctx context.Context, request *notesgrpcapi.GetUserRequest) (*notesgrpcapi.GetUserResponse, error) {
 
 	requestUserId, err := uuid.Parse(request.GetUserId())
 	if err != nil {
@@ -62,18 +62,18 @@ func (g *grpcServer) GetUser(ctx context.Context, request *NotesGrpcApi.GetUserR
 	usr, err := users.GetUserById(adapters.NewUsersPostgres(g.config), requestUserId)
 
 	if usr == nil || err != nil {
-		return &NotesGrpcApi.GetUserResponse{User: nil}, err
+		return &notesgrpcapi.GetUserResponse{User: nil}, err
 	}
 
-	return &NotesGrpcApi.GetUserResponse{User: &NotesGrpcApi.User{UserId: request.GetUserId(), Name: usr.Name}}, nil
+	return &notesgrpcapi.GetUserResponse{User: &notesgrpcapi.User{UserId: request.GetUserId(), Name: usr.Name}}, nil
 }
 
-func (g *grpcServer) AddUser(ctx context.Context, request *NotesGrpcApi.AddUserRequest) (*NotesGrpcApi.AddUserResponse, error) {
+func (g *grpcServer) AddUser(ctx context.Context, request *notesgrpcapi.AddUserRequest) (*notesgrpcapi.AddUserResponse, error) {
 
 	usr, err := users.AddUser(adapters.NewUsersPostgres(g.config), request.Name)
 	if usr == nil || err != nil {
-		return &NotesGrpcApi.AddUserResponse{User: nil}, err
+		return &notesgrpcapi.AddUserResponse{User: nil}, err
 	}
 
-	return &NotesGrpcApi.AddUserResponse{User: &NotesGrpcApi.User{UserId: usr.UserId.String(), Name: usr.Name}}, nil
+	return &notesgrpcapi.AddUserResponse{User: &notesgrpcapi.User{UserId: usr.UserId.String(), Name: usr.Name}}, nil
 }

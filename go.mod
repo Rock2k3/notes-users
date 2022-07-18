@@ -3,8 +3,8 @@ module github.com/Rock2k3/notes-users
 go 1.18
 
 require (
-	github.com/Rock2k3/notes-core v0.0.0-20220718082257-7fe9724b4b8e
-	github.com/Rock2k3/notes-grpc-api v1.1.0
+	github.com/Rock2k3/notes-core v0.0.0-20220718100444-6d87f5b8dadd
+	github.com/Rock2k3/notes-grpc-api v1.1.2
 	github.com/golang-migrate/migrate/v4 v4.15.2
 	github.com/google/uuid v1.3.0
 	github.com/joho/godotenv v1.4.0
