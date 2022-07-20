@@ -1,10 +1,10 @@
 package main
 
 import (
+	"github.com/Rock2k3/notes-users/config"
+	"github.com/Rock2k3/notes-users/internal/adapters"
+	"github.com/Rock2k3/notes-users/internal/server"
 	"log"
-	"notes-users/config"
-	"notes-users/internal/adapters"
-	"notes-users/internal/server"
 )
 
 func main() {

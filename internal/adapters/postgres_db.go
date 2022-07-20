@@ -2,11 +2,11 @@ package adapters
 
 import (
 	"database/sql"
+	"github.com/Rock2k3/notes-users/config"
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 	"log"
-	"notes-users/config"
 )
 
 type postgresDb struct {
